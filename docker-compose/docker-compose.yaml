@@ -1,0 +1,31 @@
+version: "3.3"
+services:
+  mysql:
+    networks:
+      - network-tienda-videos
+    image: mysql:5.7
+    ports:
+      - 3306:3306
+    volumes:
+      - ./../database/02-sakila-data.sql:/docker-entrypoint-initdb.d/02-sakila-data.sql
+      - ./../database/01-sakila-schema.sql:/docker-entrypoint-initdb.d/01-sakila-schema.sql
+    environment:
+      - MYSQL_ROOT_PASSWORD=tienda-videos
+  backend:
+    networks:
+      - network-tienda-videos
+    image: bitius060400/tienda-videos-backend-express:0.0.1
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mysql
+    environment:
+      - DB_HOST=mysql
+      - DB_USER=root
+      - DB_PASSWORD=tienda-videos
+      - DB_PORT=3306
+      - DB_NAME=sakila
+    command: bash -c "/usr/wait-for-it.sh --timeout=0 mysql:3306 && npm start"
+networks:
+  network-tienda-videos:
+    external: true
