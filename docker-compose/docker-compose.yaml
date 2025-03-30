@@ -28,4 +28,3 @@ services:
     command: bash -c "/usr/wait-for-it.sh --timeout=0 mysql:3306 && npm start"
 networks:
   network-tienda-videos:
-    external: true
